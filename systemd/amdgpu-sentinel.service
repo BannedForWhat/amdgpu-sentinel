@@ -1,0 +1,36 @@
+[Unit]
+Description=AMDGPU Sentinel Telemetry Daemon (RDNA2 Zero-Allocation)
+Documentation=https://github.com/BannedForWhat/amdgpu-sentinel
+After=graphical-session.target
+
+[Service]
+Type=exec
+ExecStart=%h/.local/bin/amdgpu-sentinel
+Restart=on-failure
+RestartSec=2s
+
+# Защита от дребезга перезапусков (Anti-Flapping)
+StartLimitIntervalSec=30s
+StartLimitBurst=5
+
+# Ограничение ресурсов cgroups v2
+MemoryAccounting=yes
+MemoryMax=16M
+MemoryHigh=12M
+CPUWeight=20
+
+# Харденинг пользовательского уровня
+NoNewPrivileges=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictAddressFamilies=AF_UNIX
+
+# Seccomp BPF: Базовый профиль сервиса + специфичные вызовы ядра Linux 6.x
+SystemCallArchitectures=native
+SystemCallFilter=@system-service pread64 epoll_create1 epoll_ctl epoll_pwait epoll_pwait2 epoll_wait timerfd_create timerfd_settime signalfd4
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
