@@ -66,7 +66,9 @@ $$\text{Bandwidth Penalty} = \frac{\text{Bandwidth}_{\text{VRAM}}}{\min(\text{Ba
 
 Падение ПСП в 12.2 раза вызывает задержки при обработке токенов. Демон фиксирует факт вытеснения по предикату:
 
-$$\text{TTM\_ALERT} = (\text{VRAM}_{\text{used}} > 85\%) \land (\text{GTT}_{\text{used}} > 500\,\text{MiB})$$
+```c
+TTM_ALERT = (vram_used_pct > 85.0) && (gtt_used_bytes > 500 * 1024 * 1024)
+```
 
 ## Сборка и установка
 
